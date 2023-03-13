@@ -1,7 +1,9 @@
 console.clear();
 import express from 'express';
+import dotenv from 'dotenv';
 
-const PORT = 3000;
+dotenv.config(); // Guardar las variables de entorno (.env) usando dotenv
+
 const expressApp = express();
 
 // Para admitir formatos de petición y respuesta en todas los endpoints
@@ -13,4 +15,4 @@ expressApp.get("/account/:idAccount", (req, res) => {
     res.send()
 })
 
-expressApp.listen(PORT, () => console.log(`Server listening on port ${PORT}:`));
+expressApp.listen(process.env.PORT, () => console.log(`Server listening on port ${process.env.PORT}:`));
