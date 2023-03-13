@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/davidpa2/NodeJS-API/issues"
   },
-  "homepage": "https://github.com/davidpa2/NodeJS-API#readme"
+  "homepage": "https://github.com/davidpa2/NodeJS-API#readme",
+  "devDependencies": {
+    "nodemon": "2.0.21"
+  }
 }
