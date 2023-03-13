@@ -1,7 +1,7 @@
-import express from 'express';
+import { Router } from 'express';
 import { USERS_BBDD } from '../bbdd.js';
 
-const accountRouter = express.Router();
+const accountRouter = Router();
 
 // Middleware creation
 accountRouter.use((req, res, next) => {
