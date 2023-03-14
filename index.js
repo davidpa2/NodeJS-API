@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import accountRouter from './routes/account.js';
+import authRouter from './routes/auth.js';
 
 dotenv.config(); // Guardar las variables de entorno (.env) usando dotenv
 
@@ -11,6 +12,7 @@ expressApp.use(express.json());
 expressApp.use(express.text());
 //Specify the subpath which will affect our router
 expressApp.use("/account", accountRouter);
+expressApp.use("/auth", authRouter);
 
 
 expressApp.listen(process.env.PORT, () => console.log(`Server listening on port ${process.env.PORT}:`));
