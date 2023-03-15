@@ -2,6 +2,7 @@ import { Router } from "express";
 import authFunction from '../helpers/authHelper.js'
 import { SignJWT, jwtVerify } from 'jose'; // Library to generate JWT
 import { USERS_BBDD } from "../bbdd.js";
+import validateLoginDTO from "../dto/validateLoginDTO.js";
 
 const authTokenRouter = Router();
 
@@ -9,7 +10,7 @@ const authTokenRouter = Router();
  * Login user by email and password
  * @returns jwt 
  */
-authTokenRouter.post("/login", async (req, res) => {
+authTokenRouter.post("/login", validateLoginDTO, async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.sendStatus(400);
 
