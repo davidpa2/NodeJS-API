@@ -13,14 +13,14 @@ accountRouter.use((req, res, next) => {
 /**
  * Get all accounts
  */
-accountRouter.get('/account/getAll', (req, res) => {
+accountRouter.get('/getAll', (req, res) => {
     return res.send(USERS_BBDD)
 });
 
 /**
  * Get account by guid
  */
-accountRouter.get('/account/:guid', (req, res) => {
+accountRouter.get('/:guid', (req, res) => {
     const guid = req.params.guid;
     const user = USERS_BBDD.find(user => user.guid === guid);
 
@@ -32,7 +32,7 @@ accountRouter.get('/account/:guid', (req, res) => {
 /**
  * Create a new account
  */
-accountRouter.post('/account', (req, res) => {
+accountRouter.post('/create', (req, res) => {
     const { guid, name } = req.body;
 
     if (!name || !guid) return res.state(400).send();
@@ -51,7 +51,7 @@ accountRouter.post('/account', (req, res) => {
 /**
  * Update an account
  */
-accountRouter.patch('/account/:guid', (req, res) => {
+accountRouter.patch('/:guid', (req, res) => {
     const { guid } = req.params;
     const { name } = req.body;
 
@@ -69,7 +69,7 @@ accountRouter.patch('/account/:guid', (req, res) => {
 /**
  * Delete an account
  */
-accountRouter.delete('/account/:guid', (req, res) => {
+accountRouter.delete('/:guid', (req, res) => {
     const guid = req.params.guid;
     const userIndex = USERS_BBDD.findIndex(user => user.guid === guid);
 
