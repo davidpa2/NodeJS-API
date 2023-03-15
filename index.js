@@ -14,10 +14,11 @@ const expressApp = express();
 // To admit request and response formats in all of the endpoints
 expressApp.use(express.json());
 expressApp.use(express.text());
+
 //Specify the subpath which will affect our router
 expressApp.use("/account", accountRouter);
 expressApp.use("/auth", authRouter);
-// expressApp.use("/auth-token", authTokenRouter);
+expressApp.use("/auth-token", authTokenRouter);
 expressApp.use("/auth-session", authSessionRouter);
 
 expressApp.listen(process.env.PORT, () => console.log(`Server listening on port ${process.env.PORT}:`));
