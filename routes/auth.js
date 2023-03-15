@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { USERS_BBDD } from '../bbdd.js';
+import authFunction from '../helpers/authHelper.js'
 
 const authRouter = Router();
 
@@ -34,16 +34,5 @@ authRouter.post("/authorize", (req, res) => {
         return res.sendStatus(401);
     }
 })
-
-
-function authFunction(email, password) {
-    const user = USERS_BBDD.find(user => user.email === email);
-    if (!user) throw new Error();
-
-    if (user.password !== password) throw new Error();
-
-    return user;
-}
-
 
 export default authRouter;
