@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { USERS_BBDD } from '../bbdd.js';
+import userModel from '../schemas/user-schema.js';
 
 const accountRouter = Router();
 
@@ -13,18 +13,18 @@ accountRouter.use((req, res, next) => {
 /**
  * Get all accounts
  */
-accountRouter.get('/getAll', (req, res) => {
-    return res.send(USERS_BBDD)
+accountRouter.get('/getAll', async (req, res) => {
+    return res.send(await userModel.find())
 });
 
 /**
  * Get account by guid
  */
-accountRouter.get('/:guid', (req, res) => {
+accountRouter.get('/:guid', async (req, res) => {
     const guid = req.params.guid;
-    const user = USERS_BBDD.find(user => user.guid === guid);
+    const user = await userModel.findById(guid).exec()
 
-    if (!user) return res.status(404).send();
+    if (!user) return res.status(404).send("No se ha encontrado ese usuario");
 
     return res.send(user);
 });
@@ -32,36 +32,36 @@ accountRouter.get('/:guid', (req, res) => {
 /**
  * Create a new account
  */
-accountRouter.post('/create', (req, res) => {
+accountRouter.post('/', async (req, res) => {
     const { guid, name } = req.body;
 
     if (!name || !guid) return res.state(400).send();
 
-    const user = USERS_BBDD.find(user => user.guid === guid);
+    const user = await userModel.findById(guid).exec();
 
-    if (user) return res.status(409).send();
+    if (user) return res.status(409).send("El usuario ya se encuetra registrado");
 
-    USERS_BBDD.push({
-        guid, name
-    })
+    const newUser = new userModel({ _id: guid, name })
+    await newUser.save();
 
-    return res.send();
+    return res.send("Usuario registrado");
 });
 
 /**
  * Update an account
  */
-accountRouter.patch('/:guid', (req, res) => {
+accountRouter.patch('/:guid', async (req, res) => {
     const { guid } = req.params;
     const { name } = req.body;
 
     if (!name) return res.state(400).send();
 
-    const user = USERS_BBDD.find(user => user.guid === guid);
+    const user = await userModel.findById(guid).exec();
 
     if (!user) res.status(404).send();
 
     user.name = name;
+    await user.save();
 
     return res.send();
 });
@@ -69,15 +69,15 @@ accountRouter.patch('/:guid', (req, res) => {
 /**
  * Delete an account
  */
-accountRouter.delete('/:guid', (req, res) => {
-    const guid = req.params.guid;
-    const userIndex = USERS_BBDD.findIndex(user => user.guid === guid);
+accountRouter.delete('/:guid', async (req, res) => {
+    const { guid } = req.params;
+    const user = await userModel.findById(guid).exec()
 
-    if (userIndex === -1) return res.status(404).send();
+    if (!user) return res.status(404).send("No existe este usuario");
 
-    USERS_BBDD.splice(userIndex, 1);
+    await user.remove();
 
-    return res.send();
+    return res.send("Usuario eliminado");
 });
 
 export default accountRouter;

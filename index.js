@@ -5,6 +5,7 @@ import accountRouter from './routes/account.js';
 import authRouter from './routes/auth.js';
 import authTokenRouter from './routes/auth-token.js';
 import authSessionRouter from './routes/auth-session.js';
+import mongoose from 'mongoose';
 
 dotenv.config(); // To save environment variables (.env) using dotenv
 
@@ -21,4 +22,12 @@ expressApp.use("/auth", authRouter);
 expressApp.use("/auth-token", authTokenRouter);
 expressApp.use("/auth-session", authSessionRouter);
 
-expressApp.listen(process.env.PORT, () => console.log(`Server listening on port ${process.env.PORT}:`));
+
+const bootstrap = async () => {
+    mongoose.connect(process.env.MONGODB_URL);
+
+    expressApp.listen(process.env.PORT, () =>
+        console.log(`Server listening on port ${process.env.PORT}:`));
+}
+
+bootstrap();
