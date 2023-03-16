@@ -23,24 +23,24 @@ accountRouter.get('/getAll', async (req, res) => {
  */
 accountRouter.get('/:guid', async (req, res) => {
     const guid = req.params.guid;
-    const user = await userModel.findById(guid).exec()
+    const user = await userModel.find({ guid }).exec()
 
-    if (!user) return res.status(404).send("No se ha encontrado ese usuario");
+    if (!user[0]) return res.status(404).send("No se ha encontrado ese usuario");
 
-    return res.send(user);
+    return res.send(user[0]);
 });
 
 /**
  * Create a new account
  */
 accountRouter.post('/', async (req, res) => {
-    const { guid, name, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) return res.state(400).send();
 
-    const user = await userModel.findById(guid).exec();
+    const user = await userModel.find({ email }).exec();
 
-    if (user) return res.status(409).send("El usuario ya se encuetra registrado");
+    if (user[0]) return res.status(409).send("El usuario ya se encuetra registrado");
 
     const newUser = new userModel({ guid: uuid(), name, email, password })
     await newUser.save();
@@ -57,12 +57,12 @@ accountRouter.patch('/:guid', async (req, res) => {
 
     if (!name) return res.state(400).send();
 
-    const user = await userModel.findById(guid).exec();
+    const user = await userModel.find({ guid }).exec();
 
-    if (!user) res.status(404).send();
+    if (!user[0]) res.status(404).send();
 
-    user.name = name;
-    await user.save();
+    user[0].name = name;
+    await user[0].save();
 
     return res.send();
 });
@@ -72,11 +72,11 @@ accountRouter.patch('/:guid', async (req, res) => {
  */
 accountRouter.delete('/:guid', async (req, res) => {
     const { guid } = req.params;
-    const user = await userModel.findById(guid).exec()
+    const user = await userModel.find({ guid }).exec()
 
-    if (!user) return res.status(404).send("No existe este usuario");
+    if (!user[0]) return res.status(404).send("No existe este usuario");
 
-    await user.remove();
+    await user[0].deleteOne();
 
     return res.send("Usuario eliminado");
 });

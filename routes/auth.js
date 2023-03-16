@@ -6,12 +6,12 @@ const authRouter = Router();
 /**
  * Authenticate users
  */
-authRouter.post("/authenticate", (req, res) => {
+authRouter.post("/authenticate", async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.sendStatus(400);
 
     try {
-        const user = authFunction(email, password);
+        const user = await authFunction(email, password);
         return res.send(`Authenticated user: ${user.name}`);
     } catch (error) {
         return res.sendStatus(401);
