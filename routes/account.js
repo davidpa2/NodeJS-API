@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import userModel from '../schemas/user-schema.js';
+import { v4 as uuid } from 'uuid';
 
 const accountRouter = Router();
 
@@ -33,15 +34,15 @@ accountRouter.get('/:guid', async (req, res) => {
  * Create a new account
  */
 accountRouter.post('/', async (req, res) => {
-    const { guid, name } = req.body;
+    const { guid, name, email, password } = req.body;
 
-    if (!name || !guid) return res.state(400).send();
+    if (!name || !email || !password) return res.state(400).send();
 
     const user = await userModel.findById(guid).exec();
 
     if (user) return res.status(409).send("El usuario ya se encuetra registrado");
 
-    const newUser = new userModel({ _id: guid, name })
+    const newUser = new userModel({ guid: uuid(), name, email, password })
     await newUser.save();
 
     return res.send("Usuario registrado");
