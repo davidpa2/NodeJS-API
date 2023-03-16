@@ -1,8 +1,8 @@
 import { Router } from "express";
 import authFunction from '../helpers/authHelper.js'
 import { SignJWT, jwtVerify } from 'jose'; // Library to generate JWT
-import { USERS_BBDD } from "../bbdd.js";
 import validateLoginDTO from "../dto/validateLoginDTO.js";
+import userModel from "../schemas/user-schema.js";
 
 const authTokenRouter = Router();
 
@@ -15,9 +15,9 @@ authTokenRouter.post("/login", validateLoginDTO, async (req, res) => {
     if (!email || !password) return res.sendStatus(400);
 
     try {
-        const { guid } = authFunction(email, password);
+        const user = await authFunction(email, password);
 
-        const jwtConstructor = new SignJWT({ guid });
+        const jwtConstructor = new SignJWT({ guid: user.guid });
 
         const encoder = new TextEncoder();
         const jwt = await jwtConstructor
@@ -37,20 +37,19 @@ authTokenRouter.post("/login", validateLoginDTO, async (req, res) => {
  * @returns user
  */
 authTokenRouter.get("/profile", async (req, res) => {
-    const { authorization } = req.headers
+    const { authorization } = req.headers;
     if (!authorization) return res.sendStatus(401)
 
     try {
         const encoder = new TextEncoder();
-        const { payload } = await jwtVerify(authorization, encoder.encode(process.env.JWT_PRIVATE_KEY))
+        const  {payload}  = await jwtVerify(authorization, encoder.encode(process.env.JWT_PRIVATE_KEY))
 
-        const user = USERS_BBDD.find((user) => user.guid === payload.guid);
-
+        const user = await userModel.find({guid: payload.guid}).exec();
         if (!user) return res.sendStatus(401);
 
-        delete user.password;
+        delete user[0].password;
 
-        return res.send(user);
+        return res.send(user[0]);
     } catch (error) {
 
     }

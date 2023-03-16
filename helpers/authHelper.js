@@ -1,12 +1,11 @@
-import { USERS_BBDD } from '../bbdd.js';
+import userModel from '../schemas/user-schema.js';
 
-const authFunction = (email, password) => {
-    const user = USERS_BBDD.find(user => user.email === email);
+const authFunction = async (email, password) => {
+    const user = await userModel.find({ email })
     if (!user) throw new Error();
 
-    if (user.password !== password) throw new Error();
-
-    return user;
+    if (user[0].password !== password) throw new Error();
+    return user[0];
 }
 
 export default authFunction;
